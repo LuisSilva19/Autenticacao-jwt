@@ -1,0 +1,14 @@
+services:
+    mysql:
+        image: mysql:8.0.25
+        restart: on-failure
+        ports:
+            - 3306:3306
+        volumes:
+            - ./mysql:/docker-entrypoint-initdb.d
+        environment:
+            - MYSQL_DATABASE=creditBoard
+            - MYSQL_ALLOW_EMPTY_PASSWORD=true
+volumes:
+    myvolume:
+

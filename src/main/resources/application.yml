@@ -1,0 +1,69 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: ms-credit-board-bff
+    version: @project.version@
+  mvc:
+    patchmatch:
+      matching-strategy: ant-path-matcher
+  banner:
+    location: classpath:banner.txt
+  datasource:
+    hikari:
+      connectionTimeout: 30000
+      maximumPoolSize: 5
+      max-lifetime: 120000
+      minimum-idle: 1
+      idle-timeout: 120000
+    url: jdbc:mysql://localhost:3306/creditBoard
+    username: user
+    password: 12345
+
+  api-docs:
+    path: /api-docs
+
+api:
+  service:
+    name: ${spring.application.name}
+  logging:
+    level: INFO
+    appender: CONSOLE-DEV
+  servicos:
+    middleware:
+      url: ${API_DECISION_MIDDLEWARE_SERVICE_URL:http://ms-credit-management-middleware.ms.qa}
+    limit:
+      url: ${API_DECISION_LIMIT_SERVICE_URL:http://ms-credit-managemment-limit.ms.qa}
+    person:
+      url: ${API_PERSON_SERVICE_URL:http://person.ms.qa}
+
+logging:
+  logback:
+    rolling-policy:
+      max-file-size: 20MB
+      max-history: 30
+  level:
+    root: INFO
+
+management:
+  endpoint:
+    health:
+      show-details: always
+      group.liveness.include: livenessProbe,db
+  health:
+    probes.enabled: true
+    binders.enabled: false
+    diskspace.enabled: false
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus
+      base-path: '/health'
+      path-mapping:
+        prometheus: 'metrics'
+
+security:
+  jwt:
+    expiration: 1500000
+    subscriptionKey: javax.crypto.spec.SecretKeySpec@fa77d3d1
